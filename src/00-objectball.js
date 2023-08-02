@@ -114,33 +114,33 @@ function gameObject() {
         }
     };
 }
-// debugger
-// console.log(gameObject());
+
+const game = gameObject();
 
 function numPointsScored(name){
-    for (const key in gameObject){
-        for (const key2 in gameObject[key][players]){
+    for (const key in game){
+        for (const key2 in game[key][`players`]){
             if (key2 === name){
-                return gameObject[key][players][key2][`points`];
+                return game[key][`players`][key2][`points`];
             }
         }
     }
 }
 
 function shoeSize(playerName){
-    for (const key in gameObject){
-        for (const key2 in gameObject[key][players]){
+    for (const key in game){
+        for (const key2 in game[key][`players`]){
             if (key2 === playerName){
-                return gameObject[key][players][key2][`shoe`];
+                return game[key][`players`][key2][`shoe`];
             }
         }
     }
 }
 
 function teamColors(nameOfTeam) {
-    for (const key in gameObject) {
-        if(gameObject[key][teamName] === nameOfTeam){
-            return gameObject[key][teamColors];
+    for (const key in game) {
+        if(game[key][`teamName`] === nameOfTeam){
+            return game[key][`colors`];
         }
     }
 }
@@ -148,8 +148,8 @@ function teamColors(nameOfTeam) {
 function teamNames() {
     let teamNameList = [];
 
-    for (const key in gameObject) {
-        teamNameList[teamNameList.length] = gameObject[key][teamName];
+    for (const key in game) {
+        teamNameList[teamNameList.length] = game[key][`teamName`];
     }
 
     return teamNameList;
@@ -158,10 +158,10 @@ function teamNames() {
 function playerNumbers(nameOfTeam) {
     let listOfPlayerNumbers = [];
 
-    for (const key in gameObject){
-        if (gameObject[key][teamName] === nameOfTeam){
-            for (const key2 of gameObject[key][players]){
-                listOfPlayerNumbers[listOfPlayerNumbers.length] = gameObject[key][players][key2][number];
+    for (const key in game){
+        if (game[key][`teamName`] === nameOfTeam){
+            for (const key2 in game[key][`players`]){
+                listOfPlayerNumbers[listOfPlayerNumbers.length] = game[key][`players`][key2][`number`];
             }
         }
     }
@@ -170,38 +170,39 @@ function playerNumbers(nameOfTeam) {
 }
 
 function playerStats(playerName){
-    for (const key in gameObject){
-        for (const key2 in gameObject[key][players]){
+    for (const key in game){
+        for (const key2 in game[key][`players`]){
             if (key2 === playerName){
-                return gameObject[key][players][key2];
+                return game[key][`players`][key2];
             }
         }
     }
 }
 
 function bigShoeRebounds(){
-    let playerWithBiggestShoe = [``, 0];
+    let playerWithBiggestShoe = [``, 0, `key`];
 
-    for (const key in gameObject){
-        for (const key2 in gameObject[key][players]){
-            if(gameObject[key][players][key2][shoe] > playerWithBiggestShoe[1]){
+    for (const key in game){
+        for (const key2 in game[key][`players`]){
+            if(game[key][`players`][key2][`shoe`] > playerWithBiggestShoe[1]){
                 playerWithBiggestShoe[0] = key2;
-                playerWithBiggestShoe[1] = gameObject[key][players][key2][shoe]
+                playerWithBiggestShoe[1] = game[key][`players`][key2][`shoe`];
+                playerWithBiggestShoe[2] = key;
             }
         }
     }
 
-    return gameObject[key][players][playerWithBiggestShoe[0]][rebounds];
+    return game[playerWithBiggestShoe[2]][`players`][playerWithBiggestShoe[0]][`rebounds`];
 }
 
 function mostPointsScored() {
     let playerWithMostPoints = [``, 0];
 
-    for (const key in gameObject){
-        for (const key2 in gameObject[key][players]){
-            if(gameObject[key][players][key2][points] > playerWithMostPoints[1]){
+    for (const key in game){
+        for (const key2 in game[key][`players`]){
+            if(game[key][`players`][key2][`points`] > playerWithMostPoints[1]){
                 playerWithMostPoints[0] = key2;
-                playerWithMostPoints[1] = gameObject[key][players][key2][points]
+                playerWithMostPoints[1] = game[key][`players`][key2][`points`]
             }
         }
     }
@@ -213,17 +214,17 @@ function winningTeam() {
     let teamPoints = [0, 0];
     let teamPointCounter = 0;
 
-    for(const key in gameObject){
-        for (const key2 in gameObject[key][players]){
-             teamPoints[teamPointCounter] += gameObject[key][player][key2][points];
+    for(const key in game){
+        for (const key2 in game[key][`players`]){
+             teamPoints[teamPointCounter] += game[key][`players`][key2][`points`];
         }
         teamPointCounter++;
     }
 
     if(teamPoints[0] > teamPoints[1]){
-        return Object.keys(gameObject)[0];
+        return Object.keys(game)[0];
     } else if (teamPoints[0] < teamPoints[1]){
-        return Object.keys(gameObject)[1];
+        return Object.keys(game)[1];
     }else {
         return `Tie`;
     }
@@ -232,13 +233,14 @@ function winningTeam() {
 function playerWithLongestName () {
     let playerList = [];
 
-    for (const key in gameObject){
-        playerlist[playerList.length] = [...Object.keys(gameObject[key][players])];
+    for (const key in game){
+        for (const key2 in game[key][`players`])
+        playerList[playerList.length] = key2;
     }
 
     for (const element in playerList){
-        if(element.length > playerList[0]){
-            playerList[0] = element;
+        if(playerList[element].length > playerList[0].length){
+            playerList[0] = playerList[element];
         }
     }
 
@@ -248,14 +250,16 @@ function playerWithLongestName () {
 function playerWithMostSteals() {
     let mostStealsPlayer = [``, 0];
 
-    for (const key in gameObject){
-        for (const key2 in gameObject[key][players]){
-            if(gameObject[key][players][key2][steals] > mostStealsPlayer[1]){
+    for (const key in game){
+        for (const key2 in game[key][`players`]){
+            if(game[key][`players`][key2][`steals`] > mostStealsPlayer[1]){
                 mostStealsPlayer[0] = key2;
-                mostStealsPlayer[1] = gameObject[key][players][key2][steals]
+                mostStealsPlayer[1] = game[key][`players`][key2][`steals`]
             }
         }
     }
+
+    return mostStealsPlayer[0];
 }
 
 function doesLongNameStealATon() {
@@ -266,3 +270,31 @@ function doesLongNameStealATon() {
         return false
     }
 }
+
+// console.log(`NumPointsScored--------------------------------`)
+// console.log(numPointsScored('Mason Plumlee'));
+// console.log(numPointsScored('Brendan Haywood'));
+// console.log(`Shoe Size--------------------------------------`)
+// console.log(shoeSize('Mason Plumlee'));
+// console.log(shoeSize('Brendan Haywood'));
+// console.log(`Team Colors--------------------------------------`)
+// console.log(teamColors('Brooklyn Nets'));
+// console.log(teamColors('Charlotte Hornets'));
+// console.log(`Team Names---------------------------------------`)
+// console.log(teamNames());
+// console.log(`Player Numbers-----------------------------------`)
+// console.log(playerNumbers('Brooklyn Nets'));
+// console.log(playerNumbers('Charlotte Hornets'));
+// console.log(`playerStats--------------------------------------`)
+// console.log(playerStats('Mason Plumlee'));
+// console.log(playerStats('Brendan Haywood'));
+// console.log(`bigShoeRebounds----------------------------------`)
+// console.log(bigShoeRebounds());
+// console.log(`mostPointsScored---------------------------------`)
+// console.log(mostPointsScored());
+// console.log(`winningTeam--------------------------------------`)
+// console.log(winningTeam());
+// console.log(`playerWithLongestName----------------------------`)
+// console.log(playerWithLongestName());
+// console.log(`doesLongNameStealATon----------------------------`)
+// console.log(doesLongNameStealATon());
